@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 function App() {
-  const [imageUrl, setImageUrl] = useState("");
-  const [Explanation, setExplanation] = useState("");
-  // const [imageUrl, setImageUrl] = useState('');
-  const [Title, setTitle] = useState("");
+  const [mediaUrl, setMediaUrl] = useState("");
+  const [explanation, setExplanation] = useState("");
+  const [title, setTitle] = useState("");
+  const [mediaType, setMediaType] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,50 +15,53 @@ function App() {
           "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY"
         );
         const data = await response.json();
-        setImageUrl(data.url);
+        setMediaUrl(data.url);
         setExplanation(data.explanation);
         setTitle(data.title);
-        console.log(data);
+        setMediaType(data.media_type);
         setIsLoading(false);
       } catch (error) {
-        console.error("Error fetching NASA image:", error);
+        console.error("Error fetching NASA data:", error);
         setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Empty dependency array means this effect runs once on component mount
+  }, []);
+
+  const renderMedia = () => {
+    if (mediaType === "image") {
+      return <img src={mediaUrl} alt="NASA Image" style={{ maxWidth: "100%" }} />;
+    } else if (mediaType === "video") {
+      return (
+        <iframe
+          title="NASA Video"
+          width="560"
+          height="315"
+          src={mediaUrl}
+          frameBorder="0"
+          allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        ></iframe>
+      );
+    } else {
+      return <p>Unsupported media type</p>;
+    }
+  };
 
   return (
     <div className="container">
-      {/* <h1 className="main-head">NASA Image of the Day</h1> */}
       {isLoading ? (
-        <div class="spinner">
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <p>Loading...</p>
       ) : (
-        imageUrl && (
-          <img
-            id="nasa-img"
-            src={imageUrl}
-            alt="NASA Image"
-            style={{ maxWidth: "100%" }}
-          />
-        )
+        <>
+          {renderMedia()}
+          <div className="m-body">
+            <h2>{title}</h2>
+            <p>{explanation}</p>
+          </div>
+        </>
       )}
-      <div className="m-body">
-        <h2>{Title}</h2>
-        <p>{Explanation}</p>
-      </div>
     </div>
   );
 }
