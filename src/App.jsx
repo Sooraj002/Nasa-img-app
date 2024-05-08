@@ -31,7 +31,9 @@ function App() {
 
   const renderMedia = () => {
     if (mediaType === "image") {
-      return <img src={mediaUrl} alt="NASA Image" style={{ maxWidth: "100%" }} />;
+      return (
+        <img src={mediaUrl} alt="NASA Image" style={{ maxWidth: "100%" }} />
+      );
     } else if (mediaType === "video") {
       return (
         <iframe
